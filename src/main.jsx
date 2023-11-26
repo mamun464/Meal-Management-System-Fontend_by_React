@@ -9,6 +9,7 @@ import {
 } from "react-router-dom";
 import UsersList from './Components/UsersList/UsersList.jsx';
 
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -17,6 +18,7 @@ const router = createBrowserRouter([
       {
         path: "/users",
         element: <UsersList></UsersList>,
+
       },
     ],
   },

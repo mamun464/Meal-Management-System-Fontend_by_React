@@ -1,0 +1,12 @@
+.table-row:not(.clicked-row):hover {
+    background-color: #f0f0f0;
+    /* Change the background color on hover */
+    cursor: pointer;
+    /* Change the cursor to a pointer on hover */
+}
+
+
+.clicked-row {
+    background-color: #8effa5;
+    /* Change the background color when row is clicked */
+}
