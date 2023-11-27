@@ -10,3 +10,7 @@
     background-color: #8effa5;
     /* Change the background color when row is clicked */
 }
+
+.add-shadow {
+    box-shadow: 0px 2px 10px 0px rgba(0, 0, 0, 0.05);
+}

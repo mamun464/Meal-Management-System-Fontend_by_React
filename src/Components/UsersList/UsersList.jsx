@@ -46,7 +46,7 @@ const UsersList = () => {
             </div>
             <p className='border-b-2 border-[#2332551A]'></p>
             <div className='bg-[#FFF]'>
-                <p className='font-medium text-[14px] text-[#2332557F] py-5 px-4'>Showing 1 - 10 of 70 students</p>
+                <p className='font-medium text-[14px] text-[#2332557F] py-5 px-4 pb-0'>Showing 1 - 10 of 70 students</p>
                 <Table
                     users={users}
                 ></Table>

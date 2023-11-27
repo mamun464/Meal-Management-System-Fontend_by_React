@@ -8,6 +8,7 @@ import {
   RouterProvider,
 } from "react-router-dom";
 import UsersList from './Components/UsersList/UsersList.jsx';
+import base_url from '../public/config.js';
 
 
 const router = createBrowserRouter([
@@ -17,6 +18,12 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/users",
+        element: <UsersList></UsersList>,
+
+      },
+      {
+        path: "/users/:user_id/:year/:month",
+        loader: ({ params }) => fetch(`${base_url}/api/hostel/monthly-user-details/?user_id=${parseInt(params.user_id)}&year=${parseInt(params.year)}&month=${parseInt(params.month)}`),
         element: <UsersList></UsersList>,
 
       },
