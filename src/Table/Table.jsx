@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 const Table = ({ users }) => {
     const handleUser = (id) => {
         console.log("Clocked: " + id);
+        // return id;
     };
     return (
         <div className="p-4">

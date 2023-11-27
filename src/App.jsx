@@ -11,6 +11,7 @@ function App() {
     <>
       <Header></Header>
       <Outlet></Outlet>
+
     </>
   )
 }

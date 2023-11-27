@@ -4,27 +4,27 @@ import { FaPersonCircleCheck } from "react-icons/fa6"
 import { FaPersonCircleXmark } from "react-icons/fa6";
 import base_url from './../../public/config';
 import './TableRow.css';
-import { useState } from 'react';
+
 const TableRow = ({ user, handleUser }) => {
     const { id, fullName, email, phone_no, user_profile_img, is_active, is_manager, } = user;
-    const [clickedRow, setClickedRow] = useState(null);
 
     const handleClickEffect = () => {
         handleUser(id);
-
-        // Toggle the class based on the current state
-        setClickedRow((prevClickedRow) => (prevClickedRow === id ? null : id));
-
-
+        document.querySelectorAll('.table-row').forEach(row => {
+            const rowId = parseInt(row.getAttribute('id'));
+            if (rowId !== id) {
+                row.classList.remove('clicked-row');
+            } else row.classList.add('clicked-row');
+        });
     };
 
     return (
         <>
             {/* row 1 */}
             <tr
-                className={`table-row ${clickedRow === id ? 'clicked-row' : ''}`}
-                data-id={id}
-                onClick={handleClickEffect}>
+                className={`table-row`}
+                onClick={handleClickEffect}
+                id={id}>
                 <th>
                     <label>
                         <input type="checkbox" className="checkbox" />
