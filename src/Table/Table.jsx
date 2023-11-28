@@ -1,29 +1,202 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import TableRow from "./TableRow";
 import PropTypes from 'prop-types';
 import base_url from "../../public/config";
 import { useLoaderData, useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import './TableRow.css';
+import UserDetails from './../Components/UserDetails/UserDetails';
+import { ClockLoader } from "react-spinners";
 
 
 
-const Table = ({ users }) => {
+const Table = ({ users, month, year, fetchData }) => {
     const userDetails = useLoaderData()
-    // console.log(userDetails2)
-    let year = 2023
-    let month = 8
+
+
+
     const [userId, setUsersId] = useState(null);
+    const [loading, setLoading] = useState(false);
     // const [userDetails, setUserDetails] = useState({});
     const navigate = useNavigate();
     // const [url, setUrl] = useState("");
 
     const handleUser = (id) => {
         console.log("Clocked: " + id);
-        setUsersId(userId)
-        const params = `${id}/${year}/${month}`;
+        setUsersId(id);
+        // console.log("Usaer id: " + userId + "  Get Id" + id);
+        // console.log('Clicks row with month:', month)
+        // console.log('Clicks row with year', year)
+        const params = `${id}/${month}/${year}`;
         navigate(`/users/${params}`);
 
     };
+
+    const handleUserDeactivate = (userId) => {
+        // const params = `${userId}`;
+        setLoading(true);
+        fetch(`${base_url}/api/user/status-change/${userId}/`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+            .then(response => {
+                if (response.ok) {
+                    // User deactivated successfully
+                    // You may want to update your UI or perform any other actions
+                    navigate(`/users/`);
+                    fetchData()
+                    toast.warn('Deactivated Successfully', {
+                        position: "top-right",
+                        autoClose: 1500,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "light",
+                    });
+                    console.log(`User with ID ${userId} deactivated successfully`);
+                } else if (response.status === 404) {
+                    // User was already deactivated
+                    // You may want to show a message to the user
+                    toast.error(`Error: ${response.status}: Page Not Found!`, {
+                        position: "top-right",
+                        autoClose: 1500,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "light",
+                    });
+                    console.log(`User with ID ${userId} is already deactivated`);
+                } else {
+                    // Handle other error cases
+                    response.json().then(data => {
+                        // Log or print the error message and status
+                        console.error(`Error: ${data.detail}`);
+                        console.error(`Status: ${response.status}`);
+
+                        // Show a toast message with the error details
+                        toast.error(`Error: ${data.detail}`, {
+                            position: "top-right",
+                            autoClose: 1500,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            progress: undefined,
+                            theme: "light",
+                        });
+                    });
+                }
+            })
+            .catch(error => {
+                // Handle network errors or other issues
+                console.error('Error:', error);
+                toast.error('Network error or other issues', {
+                    position: "top-right",
+                    autoClose: 1500,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                });
+            })
+
+            .finally(() => {
+                setLoading(false);
+            });
+
+    }
+
+    const handleUserActive = (userId) => {
+        setLoading(true);
+
+        fetch(`${base_url}/api/user/status-change/${userId}/`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+            .then(response => {
+                if (response.ok) {
+                    // User deactivated successfully
+                    // You may want to update your UI or perform any other actions
+                    navigate(`/users/`);
+                    fetchData()
+                    toast.success('Activated Successfully', {
+                        position: "top-right",
+                        autoClose: 1500,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "light",
+                    });
+                    console.log(`User with ID ${userId} Activated successfully`);
+                } else if (response.status === 404) {
+                    // User was already deactivated
+                    // You may want to show a message to the user
+                    toast.error(`Error: ${response.status}: Page Not Found!`, {
+                        position: "top-right",
+                        autoClose: 1500,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "light",
+                    });
+                    console.log(`User with ID ${userId} is already Activated`);
+                } else {
+                    // Handle other error cases
+                    response.json().then(data => {
+                        // Log or print the error message and status
+                        console.error(`Error: ${data.detail}`);
+                        console.error(`Status: ${response.status}`);
+
+                        // Show a toast message with the error details
+                        toast.error(`Error: ${data.detail}`, {
+                            position: "top-right",
+                            autoClose: 1500,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            progress: undefined,
+                            theme: "light",
+                        });
+                    });
+                }
+            })
+            .catch(error => {
+                // Handle network errors or other issues
+                console.error('Error:', error);
+                toast.error('Network error or other issues', {
+                    position: "top-right",
+                    autoClose: 1500,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                })
+            })
+
+            .finally(() => {
+                setLoading(false);
+            });
+    }
+
+
 
 
     return (
@@ -68,104 +241,37 @@ const Table = ({ users }) => {
                     </table>
                 </div>
             </div >
-            <div className="flex-1 bg-[#FAFAFA]">
-                <div className=" add-shadow bg-[#fff] p-4 text-[#233255CC] mr-4 h-fit rounded-lg">
-
-
-                    <h1 className="text-xl font-medium mb-6 text-center">Member Details</h1>
-                    <div className="avatar flex justify-center mb-3">
-                        <div className="w-24 mask mask-squircle">
-
-                            <img src={`${base_url}${userDetails?.user_details.profile_img}`} />
-                        </div>
-                    </div>
-                    <p className="text-[10px] uppercase mb-1">Name</p>
-                    <h1 className="text-[15px] uppercase mb-6">{userDetails?.user_details.fullName}</h1>
-
-                    <p className="text-[10px] uppercase mb-1">email</p>
-                    <h1 className="text-[15px] uppercase mb-6">{userDetails?.user_details.email}</h1>
-
-                    <p className="text-[10px] uppercase mb-1">phone</p>
-                    <h1 className="text-[15px] uppercase mb-3">{userDetails?.user_details.phone_no}</h1>
-
-                    <div className={`rounded-lg mb-6 py-2 px-2 ${userDetails?.user_accounts.due_status ? 'bg-red-100' : 'bg-green-100'}`}>
-                        <h1 className="uppercase text-[13px] text-[#233255CC] font-semibold text-center mb-3">User Account</h1>
-                        <table className="w-full text-[13px]">
-                            <tr>
-                                <td className=" w-40"><p className="font-medium  text-[13px]">Total Pay:</p></td>
-                                <td><span className="font-extrabold">{userDetails?.user_accounts.total_taka_submit}</span></td>
-                            </tr>
-                            <tr>
-                                <td><p className="font-medium  text-[13px]">Meal Cost:</p></td>
-                                <td><span className=" font-extrabold">{userDetails?.user_accounts.meal_cost_monthly}</span></td>
-                            </tr>
-                            <tr className="border-b-[1px] border-[#2332551A]">
-                                <td><p className="font-medium  text-[13px]">Extra Expenses:</p></td>
-                                <td><span className=" font-extrabold">{userDetails?.user_accounts.extra_cost.extra_cost_per_head}</span> (per person)</td>
-                            </tr>
-
-                            {userDetails?.user_accounts.due_status ? (
-                                <tr>
-                                    <td className="font-medium">Balance Due: </td>
-                                    <td><span className=" font-extrabold">{userDetails?.user_accounts.due}</span></td>
-                                </tr>
-                            ) : (
-                                <tr>
-                                    <td className="font-medium">Remaining Balance: </td>
-                                    <td><span className=" font-extrabold">{userDetails?.user_accounts.remain_balance}</span></td>
-                                </tr>
-                            )}
-
-                        </table>
-                        {/* <div className="grid grid-cols-3  gap-1">
-                            <div className="col-span-2 pl-5">
-                                <p className="font-medium  text-[13px]">Total Pay: <span className="text-base font-semibold">{userDetails?.user_accounts.total_taka_submit}</span></p>
-                                <p className="font-medium  text-[13px]">Meal Cost: <span className="text-base font-semibold " >{userDetails?.user_accounts.meal_cost_monthly}</span></p>
-                                <p className="font-medium  text-[13px]">Extra Expenses: <span className="text-base font-semibold">{userDetails?.user_accounts.extra_cost.extra_cost_per_head}</span></p>
-
-                            </div>
-
-                            <div>
-
-
-                            </div>
-
-                        </div> */}
-                        {/* <p className='border-b-2 border-[#2332551A]'></p> */}
-                        {/* <div className="pl-6">
-                            <p className="font-medium text-[13px]">
-                                {userDetails?.user_accounts.due_status ? (
-                                    <>Balance Due: <span className="text-base font-semibold">{userDetails?.user_accounts.due}</span></>
-                                ) : (
-                                    <>Remaining Balance: <span className="text-base font-semibold">{userDetails?.user_accounts.remain_balance}</span></>
-                                )}
-                            </p>
-                        </div> */}
-                    </div>
-
-                    <div className="flex justify-between">
-                        <button className="border border-solid border-blue-500 border-opacity-40 px-3 py-2 uppercase text-[#233255CC] text-opacity-80 hover:bg-blue-200  shadow-md rounded-md">Details</button>
-                        <button
-                            className="px-3 py-2 uppercase text-red-600 text-opacity-80 shadow-md border border-solid border-red-500 border-opacity-40  hover:bg-red-200 focus:border-red-300 rounded-md"
-                            style={{
-                                textShadow: '0px 4px 4px rgba(0, 0, 0, 0.05)',
-                                fontStyle: 'normal',
-                                fontWeight: '500',
-                                textTransform: 'uppercase',
-                            }}
-                        >
-                            Delete
-                        </button>
-                    </div>
-
-                    {/* <h1 className="text-[15px] uppercase mb-6">{userDetails.user_details.fullName}</h1> */}
+            <div className="flex-1 bg-[#FAFAFA] ">
+                {!loading && (
+                    <UserDetails
+                        userDetails={userDetails}
+                        handleUserDeactivate={handleUserDeactivate}
+                        handleUserActive={handleUserActive}
+                        userId={userId}
+                    />
+                )}
+                <div className="w-full mt-24 items-center flex justify-center">
+                    <ClockLoader
+                        color="#4fa94d"
+                        loading={loading}
+                        // cssOverride={override}
+                        size={80}
+                        aria-label="Loading Spinner"
+                        data-testid="loader"
+                    />
                 </div>
+
             </div>
+            <ToastContainer></ToastContainer>
         </div >
+
     );
 };
 
 Table.propTypes = {
     users: PropTypes.array.isRequired,
+    month: PropTypes.number.isRequired,
+    year: PropTypes.number.isRequired,
+    fetchData: PropTypes.func.isRequired,
 }
 export default Table;

@@ -34,13 +34,13 @@ const TableRow = ({ user, handleUser }) => {
                     <div className="flex items-center gap-3">
                         <div className="avatar">
                             <div className="mask mask-squircle w-12 h-12">
-                                <img src={`${base_url}${user_profile_img}`} alt="Avatar Tailwind CSS Component" />
+                                <img src={`${base_url}${user_profile_img}`} alt="Not_Found" />
                             </div>
                         </div>
                         <div>
                             <div className="font-bold">{fullName}</div>
                             {is_manager && (
-                                <span className="badge badge-ghost badge-sm bg-green-500 text-white px-2 py-[10px]">Manager</span>
+                                <span className="badge outline-none badge-ghost badge-sm bg-green-500 text-white px-2 py-[10px]">Manager</span>
                             )}
                         </div>
                     </div>

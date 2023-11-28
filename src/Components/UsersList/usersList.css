@@ -8,3 +8,7 @@
 /* #sidebar a.active {
     color: red;
 } */
+
+.h-custom {
+    height: 46px !important;
+}

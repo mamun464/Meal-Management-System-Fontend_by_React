@@ -4,35 +4,49 @@ import './usersList.css'
 import { NavLink } from "react-router-dom";
 import base_url from '../../../public/config';
 import { useEffect, useState } from 'react';
+import MonthYearPicker from '../MonthYear/MonthYearPicker';
+
 
 
 const UsersList = () => {
 
 
     const [users, setUsers] = useState([]);
+    const [year, setYear] = useState(new Date().getFullYear());
+    const [month, setMonth] = useState(new Date().getMonth());
+
+    const handleDatePicker = (p_month, p_year) => {
+        setYear(p_year)
+        setMonth(p_month)
+    }
+
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await fetch(`${base_url}/api/user/user-list/`);
-
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }
-
-                const result = await response.json();
-                setUsers(result);
-            } catch (error) {
-                console.error("Error fetching data:", error);
-            }
-        };
         fetchData();
     }, []);
+
+    const fetchData = async () => {
+        try {
+            const response = await fetch(`${base_url}/api/user/user-list/`);
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+
+            const result = await response.json();
+            setUsers(result);
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        }
+    };
     // console.log(users);
     return (
         <div className="border-[#F8F8F8] rounded-tl-2xl rounded-tr-2xl bg-[#F8F8F8]">
-            <div className="flex justify-end gap-4 p-4">
-                <button className="btn">PRINT</button>
-                <button className="btn bg-[#233255] text-[#fff]">CREATE MEMBER</button>
+            <div className="flex justify-end items-center gap-4 p-4">
+                <MonthYearPicker
+                    handleDatePicker={handleDatePicker}
+                ></MonthYearPicker>
+                <button className="h-custom btn w-28 bg-gray-200 hover:bg-gray-300">PRINT</button>
+                <button className="h-custom btn bg-[#233255] text-[#fff]">CREATE MEMBER</button>
             </div>
 
             <p className='border-b-2 border-[#2332551A]'></p>
@@ -49,6 +63,10 @@ const UsersList = () => {
                 <p className='font-medium text-[14px] text-[#2332557F] py-5 px-4 pb-0'>Showing 1 - 10 of 70 students</p>
                 <Table
                     users={users}
+                    month={month}
+                    year={year}
+                    fetchData={fetchData}
+
                 ></Table>
             </div>
             <h1>Users: {users.length}</h1>
