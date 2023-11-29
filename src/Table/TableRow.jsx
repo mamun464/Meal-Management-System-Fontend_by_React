@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { FaPersonCircleCheck } from "react-icons/fa6"
 import { FaPersonCircleXmark } from "react-icons/fa6";
 
+
 import './TableRow.css';
 
 const TableRow = ({ user, handleUser }) => {
@@ -21,7 +22,9 @@ const TableRow = ({ user, handleUser }) => {
     return (
         <>
             {/* row 1 */}
+
             <tr
+
                 className={`table-row`}
                 onClick={handleClickEffect}
                 id={id}>

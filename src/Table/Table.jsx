@@ -11,7 +11,8 @@ import { ClockLoader } from "react-spinners";
 
 
 
-const Table = ({ users, month, year, fetchData }) => {
+
+const Table = ({ users, month, year, fetchData, loadingForTable }) => {
     const userDetails = useLoaderData()
 
 
@@ -219,20 +220,31 @@ const Table = ({ users, month, year, fetchData }) => {
                                 <th>MEMBER STATUS</th>
                             </tr>
                         </thead>
+
                         <tbody>
+                            <tr className="w-full border flex justify-center items-center mt-4 ">
+                                <td colSpan={5}>
+                                    <ClockLoader
+                                        color="#4fa94d"
+                                        loading={loadingForTable}
+                                        // cssOverride={override}
+                                        size={100}
+                                        aria-label="Loading Spinner"
+                                        data-testid="loader"
+                                    />
+                                </td>
+                            </tr>
                             {
+
                                 users.map(user => <TableRow
                                     key={user.id}
                                     user={user}
                                     handleUser={handleUser}
+
                                 ></TableRow>)
                             }
 
-                            {/* row 2 */}
 
-                            {/* row 3 */}
-
-                            {/* row 4 */}
 
                         </tbody>
                         {/* foot */}
@@ -273,5 +285,6 @@ Table.propTypes = {
     month: PropTypes.number.isRequired,
     year: PropTypes.number.isRequired,
     fetchData: PropTypes.func.isRequired,
+    loadingForTable: PropTypes.bool.isRequired,
 }
 export default Table;

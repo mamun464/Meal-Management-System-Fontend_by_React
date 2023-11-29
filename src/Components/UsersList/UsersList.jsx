@@ -5,6 +5,7 @@ import { NavLink } from "react-router-dom";
 import base_url from '../../../public/config';
 import { useEffect, useState } from 'react';
 import MonthYearPicker from '../MonthYear/MonthYearPicker';
+import { ClockLoader } from "react-spinners";
 
 
 
@@ -12,6 +13,7 @@ const UsersList = () => {
 
 
     const [users, setUsers] = useState([]);
+    const [loading, setLoading] = useState(false);
     const [year, setYear] = useState(new Date().getFullYear());
     const [month, setMonth] = useState(new Date().getMonth());
 
@@ -26,6 +28,7 @@ const UsersList = () => {
 
     const fetchData = async () => {
         try {
+            setLoading(true)
             const response = await fetch(`${base_url}/api/user/user-list/`);
 
             if (!response.ok) {
@@ -36,6 +39,9 @@ const UsersList = () => {
             setUsers(result);
         } catch (error) {
             console.error("Error fetching data:", error);
+        } finally {
+            // Code to be executed regardless of success or failure
+            setLoading(false);
         }
     };
     // console.log(users);
@@ -61,7 +67,9 @@ const UsersList = () => {
             <p className='border-b-2 border-[#2332551A]'></p>
             <div className='bg-[#FFF]'>
                 <p className='font-medium text-[14px] text-[#2332557F] py-5 px-4 pb-0'>Showing 1 - 10 of 70 students</p>
+
                 <Table
+                    loadingForTable={loading}
                     users={users}
                     month={month}
                     year={year}
