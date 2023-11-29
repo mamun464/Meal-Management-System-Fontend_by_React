@@ -200,8 +200,8 @@ const Table = ({ users, month, year, fetchData }) => {
 
 
     return (
-        <div className="flex gap-2">
-            <div className="add-shadow w-4/5 p-4 bg-[##F8F8F8]">
+        <div className="flex  gap-2">
+            <div className="add-shadow w-3/4 p-4 bg-[##F8F8F8]">
 
                 <div className="overflow-x-auto">
                     <table className="table">

@@ -2,7 +2,7 @@
 import PropTypes from 'prop-types';
 import { FaPersonCircleCheck } from "react-icons/fa6"
 import { FaPersonCircleXmark } from "react-icons/fa6";
-import base_url from './../../public/config';
+
 import './TableRow.css';
 
 const TableRow = ({ user, handleUser }) => {
@@ -34,7 +34,7 @@ const TableRow = ({ user, handleUser }) => {
                     <div className="flex items-center gap-3">
                         <div className="avatar">
                             <div className="mask mask-squircle w-12 h-12">
-                                <img src={`${base_url}${user_profile_img}`} alt="Not_Found" />
+                                <img src={`${user_profile_img}`} alt="Not_Found" />
                             </div>
                         </div>
                         <div>
