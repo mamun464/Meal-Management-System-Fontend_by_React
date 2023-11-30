@@ -8,11 +8,12 @@ import 'react-toastify/dist/ReactToastify.css';
 import './TableRow.css';
 import UserDetails from './../Components/UserDetails/UserDetails';
 import { ClockLoader } from "react-spinners";
+import { ClipLoader } from "react-spinners";
 
 
 
 
-const Table = ({ users, month, year, fetchData, loadingForTable }) => {
+const Table = ({ users, month, year, fetchData, loadingForTable, navClick }) => {
     const userDetails = useLoaderData()
 
 
@@ -48,7 +49,7 @@ const Table = ({ users, month, year, fetchData, loadingForTable }) => {
                     // User deactivated successfully
                     // You may want to update your UI or perform any other actions
                     navigate(`/users/`);
-                    fetchData()
+                    fetchData(navClick)
                     toast.warn('Deactivated Successfully', {
                         position: "top-right",
                         autoClose: 1500,
@@ -130,7 +131,7 @@ const Table = ({ users, month, year, fetchData, loadingForTable }) => {
                     // User deactivated successfully
                     // You may want to update your UI or perform any other actions
                     navigate(`/users/`);
-                    fetchData()
+                    fetchData(navClick)
                     toast.success('Activated Successfully', {
                         position: "top-right",
                         autoClose: 1500,
@@ -201,14 +202,13 @@ const Table = ({ users, month, year, fetchData, loadingForTable }) => {
 
 
     return (
-        <div className="flex  gap-2">
-            <div className="add-shadow w-3/4 p-4 bg-[##F8F8F8]">
-
-                <div className="overflow-x-auto">
-                    <table className="table">
+        <div className="flex mb-4 mt-4 bg-[#fafafa] ">
+            <div className="add-shadow w-3/4 p-4 ">
+                <div className="overflow-x-auto bg-[#fff] rounded-lg">
+                    <table className="table ">
                         {/* head */}
                         <thead>
-                            <tr className="bg-[#F8F8F8]">
+                            <tr className="bg-[#FFF] rounded-lg">
                                 <th>
                                     <label>
                                         <input type="checkbox" className="checkbox" />
@@ -222,60 +222,62 @@ const Table = ({ users, month, year, fetchData, loadingForTable }) => {
                         </thead>
 
                         <tbody>
-                            <tr className="w-full border flex justify-center items-center mt-4 ">
-                                <td colSpan={5}>
-                                    <ClockLoader
-                                        color="#4fa94d"
-                                        loading={loadingForTable}
-                                        // cssOverride={override}
-                                        size={100}
-                                        aria-label="Loading Spinner"
-                                        data-testid="loader"
-                                    />
-                                </td>
-                            </tr>
-                            {
-
-                                users.map(user => <TableRow
-                                    key={user.id}
-                                    user={user}
-                                    handleUser={handleUser}
-
-                                ></TableRow>)
-                            }
-
-
-
+                            {loadingForTable ? (
+                                <tr className="w-full">
+                                    <td></td>
+                                    <td></td>
+                                    {/* <td></td> */}
+                                    <td colSpan={5} className="flex justify-center items-center">
+                                        <ClipLoader
+                                            color="#4fa94d"
+                                            loading={loadingForTable}
+                                            size={50}
+                                            aria-label="Loading Spinner"
+                                            data-testid="loader"
+                                        />
+                                    </td>
+                                </tr>
+                            ) : (
+                                users.map((user) => (
+                                    <TableRow key={user.id} user={user} handleUser={handleUser} />
+                                ))
+                            )}
                         </tbody>
                         {/* foot */}
-
-
                     </table>
                 </div>
-            </div >
-            <div className="flex-1 bg-[#FAFAFA] ">
-                {!loading && (
-                    <UserDetails
-                        userDetails={userDetails}
-                        handleUserDeactivate={handleUserDeactivate}
-                        handleUserActive={handleUserActive}
-                        userId={userId}
-                    />
-                )}
-                <div className="w-full mt-24 items-center flex justify-center">
-                    <ClockLoader
-                        color="#4fa94d"
-                        loading={loading}
-                        // cssOverride={override}
-                        size={80}
-                        aria-label="Loading Spinner"
-                        data-testid="loader"
-                    />
+            </div>
+            {/* FAFAFA */}
+            <div className="flex-1 bg-[#FAFAFA] p-4 ">
+                <div className=" add-shadow bg-[#fff] p-4 text-[#233255CC] h-fit rounded-lg">
+                    <h1 className="text-xl font-medium mb-6 text-center">Member Details</h1>
+                    {!loading && (
+                        <UserDetails
+                            userDetails={userDetails}
+                            handleUserDeactivate={handleUserDeactivate}
+                            handleUserActive={handleUserActive}
+                            userId={userId}
+                        />
+
+                    )}
+                    <div className="w-full mt-2 items-center flex justify-center">
+
+                        <ClockLoader
+                            color="#4fa94d"
+                            loading={loading}
+                            size={80}
+                            aria-label="Loading Spinner"
+                            data-testid="loader"
+                        />
+                    </div>
+
                 </div>
 
+
             </div>
-            <ToastContainer></ToastContainer>
-        </div >
+            <ToastContainer />
+        </div>
+
 
     );
 };
@@ -286,5 +288,6 @@ Table.propTypes = {
     year: PropTypes.number.isRequired,
     fetchData: PropTypes.func.isRequired,
     loadingForTable: PropTypes.bool.isRequired,
+    navClick: PropTypes.string.isRequired,
 }
 export default Table;
