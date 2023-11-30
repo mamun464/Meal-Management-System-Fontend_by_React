@@ -12,3 +12,26 @@
 .h-custom {
     height: 46px !important;
 }
+
+.py-3.selected {
+    padding: 0;
+    margin-top: 8px;
+    /* Adjust the margin to position the indicator below the text */
+    border-bottom: 4px solid #F39300;
+    /* Use solid border to create an underline effect */
+    border-radius: 3px;
+    /* Adjust the border-radius for rounded corners */
+}
+
+
+.span-select {
+    color: rgba(246, 173, 43, 0.90);
+    padding: 4px;
+    padding-left: 7px;
+    padding-right: 7px;
+    font-size: 12px;
+    border-radius: 3px;
+    font-weight: 600;
+    text-transform: uppercase;
+    background-color: rgba(246, 173, 43, 0.4);
+}

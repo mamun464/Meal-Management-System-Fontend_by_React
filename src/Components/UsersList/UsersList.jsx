@@ -8,7 +8,7 @@ import MonthYearPicker from '../MonthYear/MonthYearPicker';
 const UsersList = () => {
     const [users, setUsers] = useState([]);
     const [navClick, setNavClick] = useState('/api/user/active-user/');
-    const [navCSS, setNavCSS] = useState('current');
+    const [selectedNavLink, setSelectedNavLink] = useState('current');
     const [loading, setLoading] = useState(false);
     const [year, setYear] = useState(new Date().getFullYear());
     const [month, setMonth] = useState(new Date().getMonth());
@@ -18,16 +18,16 @@ const UsersList = () => {
         setMonth(p_month);
     };
 
-    const handleNavLinkClick = (url, p_navCSS) => {
+    const handleNavLinkClick = (url, type) => {
         setNavClick(url);
-        setNavCSS(p_navCSS);
+        setSelectedNavLink(type);
         fetchData(url);
 
 
     };
-    useEffect(() => {
-        console.log(navCSS);
-    }, [navCSS]); // Only re-run the effect if count changes
+    // useEffect(() => {
+    //     console.log(navCSS);
+    // }, [navCSS]); // Only re-run the effect if count changes
 
     const fetchData = async (url) => {
         try {
@@ -62,14 +62,32 @@ const UsersList = () => {
             <p className="border-b-2 border-[#2332551A]"></p>
 
             <div className="text-[#233255E5] font-bold uppercase flex gap-7 px-4">
-                <NavLink className="py-3" onClick={() => handleNavLinkClick('/api/user/user-list/', 'all')}>
-                    All
+                <NavLink
+                    className={`py-3 ${selectedNavLink === 'all' ? 'selected' : ''}`}
+                    onClick={() => handleNavLinkClick('/api/user/user-list/', 'all')}
+                >
+                    All <span
+                        className={`ml-3 ${selectedNavLink === 'all' ? 'span-select' : 'hidden'}`}
+
+                    >{users.length}</span>
                 </NavLink>
-                <NavLink className="py-3" onClick={() => handleNavLinkClick('/api/user/active-user/', 'current')}>
-                    Current Members
+                <NavLink
+                    className={`py-3 ${selectedNavLink === 'current' ? 'selected' : ''}`}
+                    onClick={() => handleNavLinkClick('/api/user/active-user/', 'current')}
+                >
+                    Current Members <span
+                        className={`ml-3 ${selectedNavLink === 'current' ? 'span-select' : 'hidden'}`}
+
+                    >{users.length}</span>
                 </NavLink>
-                <NavLink className="py-3" onClick={() => handleNavLinkClick('/api/user/deactive-user/', 'previous')}>
-                    Previous Members
+                <NavLink
+                    className={`py-3 ${selectedNavLink === 'previous' ? 'selected' : ''}`}
+                    onClick={() => handleNavLinkClick('/api/user/deactive-user/', 'previous')}
+                >
+                    Previous Members <span
+                        className={`ml-3 ${selectedNavLink === 'previous' ? 'span-select' : 'hidden'}`}
+
+                    >{users.length}</span>
                 </NavLink>
             </div>
             <p className="border-b-2 border-[#2332551A]"></p>

@@ -229,7 +229,7 @@ const Table = ({ users, month, year, fetchData, loadingForTable, navClick }) => 
                                     {/* <td></td> */}
                                     <td colSpan={5} className="flex justify-center items-center">
                                         <ClipLoader
-                                            color="#4fa94d"
+                                            color="#F39300"
                                             loading={loadingForTable}
                                             size={50}
                                             aria-label="Loading Spinner"
@@ -263,7 +263,7 @@ const Table = ({ users, month, year, fetchData, loadingForTable, navClick }) => 
                     <div className="w-full mt-2 items-center flex justify-center">
 
                         <ClockLoader
-                            color="#4fa94d"
+                            color="#F39300"
                             loading={loading}
                             size={80}
                             aria-label="Loading Spinner"
