@@ -10,6 +10,7 @@ import {
 import UsersList from './Components/UsersList/UsersList.jsx';
 import base_url from '../public/config.js';
 // import base_url from '/config.js';
+import Inventory from './Components/Inventory/Inventory';
 
 
 const router = createBrowserRouter([
@@ -33,6 +34,11 @@ const router = createBrowserRouter([
         // console.log({params}),
         loader: ({ params }) => fetch(`${base_url}/api/user/deactivate/${parseInt(params.user_id)}`),
         element: <UsersList></UsersList>,
+
+      },
+      {
+        path: "/inventory/",
+        element: <Inventory></Inventory>,
 
       },
     ],
