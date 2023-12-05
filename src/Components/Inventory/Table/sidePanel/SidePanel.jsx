@@ -1,9 +1,84 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import base_url from "../../../../../public/config";
 
 
-const SidePanel = ({ SelectedRow }) => {
+
+
+const SidePanel = ({ SelectedRow, RowID }) => {
     console.log('log from SidePanel', SelectedRow);
     const [damageInput, SetdamageInput] = useState(false)
+    const [damageAmount, setDamageAmount] = useState(0);
+
+    const handleDamageRequest = async (customUrl, damage_amount) => {
+        try {
+            console.log('damge: ', damage_amount);
+            // Replace the following lines with your actual logic
+            const response = await fetch(customUrl, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    damage_quantity: damage_amount, // Customize as needed
+                    // Other data if required
+                }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                // Show success toast
+                toast.success('Damage Issued Successfully.', {
+                    position: 'top-right',
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: 'light',
+                });
+            } else {
+                // Show error toast with the specific error message
+                toast.error(`${data.Error.damage_quantity[0]}`, {
+                    position: 'top-right',
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: 'light',
+                });
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            // Show error toast for unexpected errors
+            toast.error(`An unexpected error occurred. ${error}`, {
+                position: 'top-right',
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: 'light',
+            });
+        }
+    };
+    // useEffect(() => {
+    //     // const customUrl = 'www.damage.com/add'; // Customize this URL
+    //     console.log(">>>>>>>>>>>>>>>>>>>>>>>:", damageAmount)
+    //     // handleDamageRequest(customUrl);
+    // }, [damageAmount]);
+
+    const handleDamageSubmit = () => {
+        // console.log(">>>>>>>>>>>>>>>>>>>>>>>", damageAmount)
+        handleDamageRequest(`${base_url}/api/inventory/add-damage/?inventory_id=${RowID}`, damageAmount);
+        SetdamageInput(false);
+    }
     return (
         <>
             <div className="">
@@ -21,14 +96,19 @@ const SidePanel = ({ SelectedRow }) => {
                     <div className="form-control">
                         <label className="input-group input-group-sm">
                             <span className="text-[16px] uppercase font-medium mr-4">Damage:</span>
-                            <input type="number" placeholder="" className="input input-bordered input-sm w-28" />
-                            <button
-                                className={` ml-3 px-1 py-1 uppercase 'text-red-600 text-opacity-80 border-green-500 hover:bg-green-200 focus:border-green-300 shadow-md border border-solid border-opacity-40 rounded-md`}
-                                onClick={() => {
-                                    SetdamageInput(false)
+                            <input
+                                type="number"
+                                placeholder="Amount"
+                                className="input input-bordered input-sm w-28"
 
-                                }}
-                            >Submit</button>
+                                onChange={(e) => setDamageAmount(e.target.value)}
+                            />
+                            <button
+                                className={`ml-3 px-1 py-1 uppercase 'text-red-600 text-opacity-80 border-green-500 hover:bg-green-200 focus:border-green-300 shadow-md border border-solid border-opacity-40 rounded-md`}
+                                onClick={handleDamageSubmit}
+                            >
+                                Submit
+                            </button>
                         </label>
                     </div>
                 </div>
@@ -74,6 +154,7 @@ const SidePanel = ({ SelectedRow }) => {
                     <button
                         onClick={() => {
                             SetdamageInput(true)
+
                             // if (userDetails?.user_details?.access_permissions?.is_active) {
                             //     // User is active, call handleUserDeactivate
                             //     handleUserDeactivate(userDetails?.user_details?.user_id);
@@ -91,7 +172,7 @@ const SidePanel = ({ SelectedRow }) => {
                         }}>Damage Issued</button>
 
                 </div>
-
+                <ToastContainer />
             </div>
         </>
     );

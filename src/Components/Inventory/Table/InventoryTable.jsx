@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import base_url from "../../../../public/config";
 import SidePanel from "./sidePanel/SidePanel";
 
-const InventoryTable = ({ filterData, nodata }) => {
+const InventoryTable = ({ filterData }) => {
     const [SelectedRow, setSelectedRow] = useState('');
     const [RowID, setRowID] = useState('');
 
@@ -71,7 +71,9 @@ const InventoryTable = ({ filterData, nodata }) => {
                         <>
                             {/* <h1>{SelectedRow?.item?.item_name}</h1> */}
                             {/* {console.log("From InventoryTable.jsx", SelectedRow)} */}
-                            <SidePanel SelectedRow={SelectedRow}></SidePanel>
+                            <SidePanel SelectedRow={SelectedRow}
+                                RowID={RowID}
+                            ></SidePanel>
                         </>
                     ) : (
                         <NoRecordFound />

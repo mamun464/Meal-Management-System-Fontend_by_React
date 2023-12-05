@@ -113,14 +113,14 @@ const Inventory = () => {
     // console.log(itemDropdown)
     return (
         <div className="border-[#F8F8F8] rounded-tl-2xl rounded-tr-2xl bg-[#F8F8F8]">
-            <div className="flex justify-between items-center gap-4 p-4">
-                <div className='flex justify-start items-center gap-4 p-4'>
+            <div className="flex items-center justify-start gap-4 p-4">
+                {/* <div className='flex justify-end items-center gap-4 p-4'>
 
                     <button className="h-custom btn w-36 bg-[#233255] text-[#fff] uppercase">CREATE Item</button>
                     <button className="h-custom btn w-36 bg-[#233255] text-[#fff] uppercase">CREATE Item</button>
                     <button className="h-custom btn w-36 bg-[#233255] text-[#fff] uppercase">CREATE Item</button>
-                </div>
-                <div className='flex items-center gap-2'>
+                </div> */}
+                <div className='flex gap-2'>
                     <MonthYearPicker handleDatePicker={handleDatePicker}></MonthYearPicker>
                     <ItemDropdown
                         itemDropdown={itemDropdown}
