@@ -1,11 +1,15 @@
 
 import PropTypes from 'prop-types';
 
-const TableRowInventory = ({ item_inventory, index }) => {
-    const { item, quantity, price_per_unit, damage_quantity, purchase_date } = item_inventory
+const TableRowInventory = ({ item_inventory, index, handleInventoryList }) => {
+    const { id, item, quantity, price_per_unit, damage_quantity, purchase_date } = item_inventory
+    const handleClickEffect = () => {
+        handleInventoryList(id);
+        // console.log(id);
+    };
     return (
         <>
-            <tr className="hover">
+            <tr onClick={handleClickEffect} className="hover">
                 <th>{index + 1}</th>
                 <td>{purchase_date}</td>
                 <td>{`${item?.item_name}-(${item?.variant})`}</td>

@@ -54,10 +54,10 @@ const MonthYearPicker = ({ handleDatePicker }) => {
     return (
         <div className="" onClick={handleContainerClick}>
             {/* Input Field */}
-            <div className="relative mt-2">
+            <div className="relative">
                 <input
                     type="text"
-                    className="h-custom w-28  bg-gray-200 font-extrabold hover:bg-gray-300 hover:cursor-pointer text-red-600 text-center form-input py-4 outline-none px-3 leading-5 rounded-md transition duration-150 ease-in-out sm:text-sm sm:leading-5"
+                    className="h-custom w-36  bg-gray-200 font-extrabold hover:bg-gray-300 hover:cursor-pointer text-red-600 text-center form-input py-4 outline-none px-3 leading-5 rounded-md transition duration-150 ease-in-out sm:text-sm sm:leading-5"
                     value={`${months[selectedMonth - 1]}-${selectedYear}`}
                     readOnly
                     onClick={(e) => {

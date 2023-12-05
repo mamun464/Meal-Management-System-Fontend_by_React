@@ -113,21 +113,28 @@ const Inventory = () => {
     // console.log(itemDropdown)
     return (
         <div className="border-[#F8F8F8] rounded-tl-2xl rounded-tr-2xl bg-[#F8F8F8]">
-            <div className="flex justify-end items-center gap-4 p-4">
-                <ItemDropdown
-                    itemDropdown={itemDropdown}
-                    refreshDropdown={refreshDropdown}
-                    handleItem={handleItem}
-                ></ItemDropdown>
+            <div className="flex justify-between items-center gap-4 p-4">
+                <div className='flex justify-start items-center gap-4 p-4'>
 
-                <VariantDropdown VariantDropdown={filterVariant}
-                    handleVariant={handleVariant}
-                ></VariantDropdown>
+                    <button className="h-custom btn w-36 bg-[#233255] text-[#fff] uppercase">CREATE Item</button>
+                    <button className="h-custom btn w-36 bg-[#233255] text-[#fff] uppercase">CREATE Item</button>
+                    <button className="h-custom btn w-36 bg-[#233255] text-[#fff] uppercase">CREATE Item</button>
+                </div>
+                <div className='flex items-center gap-2'>
+                    <MonthYearPicker handleDatePicker={handleDatePicker}></MonthYearPicker>
+                    <ItemDropdown
+                        itemDropdown={itemDropdown}
+                        refreshDropdown={refreshDropdown}
+                        handleItem={handleItem}
+                    ></ItemDropdown>
 
-                <MonthYearPicker handleDatePicker={handleDatePicker}></MonthYearPicker>
-                <button className="h-custom btn w-28 bg-gray-200 hover:bg-gray-300">PRINT</button>
-                <button className="h-custom btn bg-[#233255] text-[#fff]">CREATE MEMBER</button>
+                    <VariantDropdown VariantDropdown={filterVariant}
+                        handleVariant={handleVariant}
+                    ></VariantDropdown>
+                </div>
+
             </div>
+
 
             <p className="border-b-2 border-[#2332551A]"></p>
 

@@ -15,7 +15,7 @@ const ItemDropdown = ({ itemDropdown, handleItem, refreshDropdown }) => {
         <div className="dropdown dropdown-bottom">
             <div onClick={() => {
                 refreshDropdown()
-            }} tabIndex={0} role="button" className="btn m-1">Item Category</div>
+            }} tabIndex={0} role="button" className="h-custom btn w-36 bg-gray-200 hover:bg-gray-300">Select Category</div>
             <ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
                 {itemDropdown.map((item, index) => (
                     <li className='text-center' key={index}>
