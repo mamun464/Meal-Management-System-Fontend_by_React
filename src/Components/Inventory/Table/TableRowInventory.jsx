@@ -9,7 +9,7 @@ const TableRowInventory = ({ item_inventory, index, handleInventoryList }) => {
     };
     return (
         <>
-            <tr onClick={handleClickEffect} className="hover">
+            <tr onClick={handleClickEffect} className="hover cursor-pointer">
                 <th>{index + 1}</th>
                 <td>{purchase_date}</td>
                 <td>{`${item?.item_name}-(${item?.variant})`}</td>
