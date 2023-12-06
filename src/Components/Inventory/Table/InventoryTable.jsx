@@ -6,9 +6,27 @@ import { useEffect, useState } from "react";
 import base_url from "../../../../public/config";
 import SidePanel from "./sidePanel/SidePanel";
 
-const InventoryTable = ({ filterData }) => {
+const InventoryTable = ({ filterData, fetchInventoryData, filterUrl, month, year }) => {
     const [SelectedRow, setSelectedRow] = useState('');
     const [RowID, setRowID] = useState('');
+    const [ItemId, setItemId] = useState();
+    const [StockData, setStockData] = useState({})
+
+    const InventoryStockFetch = async (url) => {
+        try {
+            const response = await fetch(url);
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+
+            const result = await response.json();
+            setStockData(result.data);
+            console.log("New Data: ", StockData);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    };
 
     const InventoryListFetch = async (url) => {
         try {
@@ -28,10 +46,14 @@ const InventoryTable = ({ filterData }) => {
     useEffect(() => {
         console.log(RowID);
         InventoryListFetch(`${base_url}/api/inventory/single-inventory/?inventory_id=${RowID}`);
-    }, [RowID]);
+        InventoryStockFetch(`${base_url}/api/inventory/stock/?item_id=${ItemId}&month=${month}&year=${year}`);
 
-    const handleInventoryList = (inventoryId) => {
+    }, [RowID, ItemId, month, year]);
+
+
+    const handleInventoryList = (inventoryId, item_id) => {
         setRowID(inventoryId);
+        setItemId(item_id);
     };
 
     return (
@@ -40,13 +62,14 @@ const InventoryTable = ({ filterData }) => {
                 <div className="overflow-x-auto bg-[#fff] rounded-lg">
                     <table className="table">
                         <thead>
-                            <tr>
+                            <tr className="text-[15px]">
                                 <th>No</th>
                                 <th>Purchase Date</th>
                                 <th>Item Name</th>
                                 <th>Quantity</th>
-                                <th>Price Per Unit</th>
                                 <th>Damage Quantity</th>
+                                <th>Price Per Unit</th>
+
                             </tr>
                         </thead>
                         <tbody>
@@ -56,6 +79,8 @@ const InventoryTable = ({ filterData }) => {
                                     index={index}
                                     item_inventory={item}
                                     handleInventoryList={handleInventoryList}
+                                    year={year}
+                                    month={month}
                                 />
                             ))}
                         </tbody>
@@ -73,6 +98,14 @@ const InventoryTable = ({ filterData }) => {
                             {/* {console.log("From InventoryTable.jsx", SelectedRow)} */}
                             <SidePanel SelectedRow={SelectedRow}
                                 RowID={RowID}
+                                fetchInventoryData={fetchInventoryData}
+                                filterUrl={filterUrl}
+                                StockData={StockData}
+                                InventoryStockFetch={InventoryStockFetch}
+                                year={year}
+                                month={month}
+                                ItemId={ItemId}
+
                             ></SidePanel>
                         </>
                     ) : (
@@ -90,7 +123,11 @@ const InventoryTable = ({ filterData }) => {
 
 InventoryTable.propTypes = {
     filterData: PropTypes.array.isRequired,
-    nodata: PropTypes.bool,  // Add any other props if needed
+    nodata: PropTypes.bool,
+    fetchInventoryData: PropTypes.func.isRequired,
+    filterUrl: PropTypes.string.isRequired,
+    month: PropTypes.number.isRequired,
+    year: PropTypes.number.isRequired,
 };
 
 export default InventoryTable;

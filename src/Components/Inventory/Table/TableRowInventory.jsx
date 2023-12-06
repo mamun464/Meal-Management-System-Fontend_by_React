@@ -3,9 +3,13 @@ import PropTypes from 'prop-types';
 
 const TableRowInventory = ({ item_inventory, index, handleInventoryList }) => {
     const { id, item, quantity, price_per_unit, damage_quantity, purchase_date } = item_inventory
+
+
+
     const handleClickEffect = () => {
-        handleInventoryList(id);
-        // console.log(id);
+        handleInventoryList(id, item.id);
+        // console.log("Iteam: ", item.id);
+
     };
     return (
         <>
@@ -14,8 +18,8 @@ const TableRowInventory = ({ item_inventory, index, handleInventoryList }) => {
                 <td>{purchase_date}</td>
                 <td>{`${item?.item_name}-(${item?.variant})`}</td>
                 <td>{quantity}</td>
-                <td>{price_per_unit}</td>
                 <td>{damage_quantity}</td>
+                <td>{price_per_unit}</td>
                 {/* <td>Desktop Support Technician</td>
                 <td>Purple</td>
                 <td>Desktop Support Technician</td>
@@ -27,8 +31,10 @@ const TableRowInventory = ({ item_inventory, index, handleInventoryList }) => {
 
 TableRowInventory.propTypes = {
     item_inventory: PropTypes.object.isRequired,
-    // handleItem: PropTypes.func.isRequired,
+    handleInventoryList: PropTypes.func.isRequired,
     // refreshDropdown: PropTypes.func.isRequired,
     index: PropTypes.number.isRequired,
+    month: PropTypes.number.isRequired,
+    year: PropTypes.number.isRequired,
 }
 export default TableRowInventory;

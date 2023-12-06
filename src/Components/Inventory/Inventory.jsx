@@ -14,6 +14,7 @@ const Inventory = () => {
     const [VariantID, SetVariantID] = useState(0);
     const [filterVariant, SetFilterVariant] = useState([]);
     const [filterData, SetFilterData] = useState([]);
+    const [filterUrl, SetFilterUrl] = useState('');
     const [year, setYear] = useState(new Date().getFullYear());
     const [month, setMonth] = useState(new Date().getMonth());
 
@@ -26,7 +27,8 @@ const Inventory = () => {
             }
 
             const result = await response.json();
-            console.log(url);
+            // console.log(url);
+            SetFilterUrl(url)
             SetFilterData(result);
         } catch (error) {
             console.error('Error fetching data:', error);
@@ -175,7 +177,13 @@ const Inventory = () => {
                 {filterData.length === 0 ? (
                     <NoRecordFound></NoRecordFound>
                 ) : (
-                    <InventoryTable filterData={filterData} />
+                    <InventoryTable
+                        filterData={filterData}
+                        fetchInventoryData={fetchInventoryData}
+                        filterUrl={filterUrl}
+                        month={month}
+                        year={year}
+                    />
                 )}
             </div>
             {/* <h1>Users: {users.length}</h1> */}
