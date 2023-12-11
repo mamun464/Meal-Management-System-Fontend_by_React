@@ -10,8 +10,10 @@ import PropTypes from 'prop-types';
 const SidePanel = ({ SelectedRow, RowID, fetchInventoryData, filterUrl, StockData, InventoryStockFetch, year, month, ItemId }) => {
     // console.log('log from SidePanel', SelectedRow);
     const [damageInput, SetDamageInput] = useState(false)
+    const [cookedInput, SetCookedInput] = useState(false)
     const [refresh, SetResfrsh] = useState(0)
     const [damageAmount, setDamageAmount] = useState(0);
+    const [cookingAmount, setcookingAmount] = useState(0);
     console.log('Side pane Stock:', StockData)
 
     const handleDamageRequest = async (customUrl, damage_amount) => {
@@ -89,6 +91,16 @@ const SidePanel = ({ SelectedRow, RowID, fetchInventoryData, filterUrl, StockDat
         console.log(">>>>>>>>>>>>>>Calling InventoryStockFetch >>>>>>>>>", url);
 
     }
+    const handleCookingSubmit = () => {
+        // console.log(">>>>>>>>>>>>>>>>>>>>>>>", damageAmount)
+        // handleDamageRequest(`${base_url}/api/inventory/add-damage/?inventory_id=${RowID}`, damageAmount);
+
+        // let url = `${base_url}/api/inventory/stock/?item_id=${ItemId}&month=${month}&year=${year}`;
+        // InventoryStockFetch(url)
+        SetCookedInput(false);
+        // console.log(">>>>>>>>>>>>>>Calling InventoryStockFetch >>>>>>>>>", url);
+
+    }
     return (
         <>
             <div className="p-6 shadow-lg">
@@ -102,44 +114,8 @@ const SidePanel = ({ SelectedRow, RowID, fetchInventoryData, filterUrl, StockDat
                 <p className="text-[10px] uppercase mb-1">Price</p>
                 <h1 className="text-[15px] font-medium mb-3">{SelectedRow?.price_per_unit} <small className="font-normal">{`Taka /${SelectedRow.item?.unit}`}</small></h1>
 
-                <div className={`my-4 ${damageInput ? '' : 'hidden'}`}>
-                    <div className="form-control">
-                        <label className="input-group input-group-sm">
-                            <span className="text-[12px] uppercase font-medium mr-4">Damage:</span>
-                            <input
-                                type="number"
-                                placeholder="Amount"
-                                className="input input-bordered input-sm w-28"
-                                required
-                                onChange={(e) => setDamageAmount(e.target.value)}
-                            />
-                            <button
-                                className={`ml-3 px-1 py-1 uppercase 'text-red-600 text-opacity-80 border-green-500 hover:bg-green-200 focus:border-green-300 shadow-md border border-solid border-opacity-40 rounded-md`}
-                                onClick={() => {
-                                    if (!damageAmount) {
-                                        // If damageAmount is empty, show a warning or handle the error as needed
-                                        toast.error('Please fill in the damage amount.', {
-                                            position: 'top-right',
-                                            autoClose: 3000,
-                                            hideProgressBar: false,
-                                            closeOnClick: true,
-                                            pauseOnHover: true,
-                                            draggable: true,
-                                            progress: undefined,
-                                            theme: 'light',
-                                        });
-                                        return;
-                                    }
-                                    handleDamageSubmit()
 
 
-                                }}
-                            >
-                                Submit
-                            </button>
-                        </label>
-                    </div>
-                </div>
 
                 <div className={`rounded-lg mb-6 py-2 px-2 ${StockData && StockData.low_stock ? 'bg-red-100' : 'bg-green-100'}`}>
                     <h1 className="uppercase text-[13px] text-[#233255CC] font-bold text-center mb-3">Inventory Stocks</h1>
@@ -178,7 +154,7 @@ const SidePanel = ({ SelectedRow, RowID, fetchInventoryData, filterUrl, StockDat
                 </div>
 
                 <div className="flex justify-between">
-                    <button className="border border-solid border-blue-500 border-opacity-40 px-3 py-2 uppercase text-[#233255CC] text-opacity-80 hover:bg-blue-200  shadow-md rounded-md">Details</button>
+                    <button className="border border-solid border-blue-500 border-opacity-40 px-3 py-2 uppercase text-[#233255CC] text-opacity-80 hover:bg-blue-200  shadow-md rounded-md">Cooked</button>
                     <button
                         onClick={() => {
                             SetDamageInput(true)
@@ -199,6 +175,85 @@ const SidePanel = ({ SelectedRow, RowID, fetchInventoryData, filterUrl, StockDat
                             textTransform: 'uppercase',
                         }}>Damage Issued</button>
 
+                </div>
+
+                <div className={`my-4 ${damageInput ? '' : 'hidden'}`}>
+                    <div className="form-control">
+                        <label className="input-group input-group-sm">
+                            <span className="text-[12px] uppercase font-medium mr-4">Damage:</span>
+                            <input
+                                type="number"
+                                placeholder="Amount"
+                                className="input input-bordered input-sm w-28"
+                                required
+                                onChange={(e) => setcookingAmount(e.target.value)}
+                            />
+                            <button
+                                className={`ml-3 px-1 py-1 uppercase 'text-red-600 text-opacity-80 border-green-500 hover:bg-green-200 focus:border-green-300 shadow-md border border-solid border-opacity-40 rounded-md`}
+                                onClick={() => {
+                                    if (!cookingAmount) {
+                                        // If damageAmount is empty, show a warning or handle the error as needed
+                                        toast.error('Please fill in the damage amount.', {
+                                            position: 'top-right',
+                                            autoClose: 3000,
+                                            hideProgressBar: false,
+                                            closeOnClick: true,
+                                            pauseOnHover: true,
+                                            draggable: true,
+                                            progress: undefined,
+                                            theme: 'light',
+                                        });
+                                        return;
+                                    }
+                                    handleDamageSubmit()
+
+
+                                }}
+                            >
+                                Submit
+                            </button>
+                        </label>
+                    </div>
+                </div>
+
+                {/* for Cooked */}
+                <div className={`my-4 ${cookedInput ? '' : 'hidden'}`}>
+                    <div className="form-control">
+                        <label className="input-group input-group-sm">
+                            <span className="text-[12px] uppercase font-medium mr-4">Cooked:</span>
+                            <input
+                                type="number"
+                                placeholder="Amount"
+                                className="input input-bordered input-sm w-28"
+                                required
+                                onChange={(e) => setcookingAmount(e.target.value)}
+                            />
+                            <button
+                                className={`ml-3 px-1 py-1 uppercase 'text-red-600 text-opacity-80 border-green-500 hover:bg-green-200 focus:border-green-300 shadow-md border border-solid border-opacity-40 rounded-md`}
+                                onClick={() => {
+                                    if (!damageAmount) {
+                                        // If damageAmount is empty, show a warning or handle the error as needed
+                                        toast.error('Please fill in the Cooking amount.', {
+                                            position: 'top-right',
+                                            autoClose: 3000,
+                                            hideProgressBar: false,
+                                            closeOnClick: true,
+                                            pauseOnHover: true,
+                                            draggable: true,
+                                            progress: undefined,
+                                            theme: 'light',
+                                        });
+                                        return;
+                                    }
+                                    handleCookingSubmit()
+
+
+                                }}
+                            >
+                                Submit
+                            </button>
+                        </label>
+                    </div>
                 </div>
                 <ToastContainer />
             </div>

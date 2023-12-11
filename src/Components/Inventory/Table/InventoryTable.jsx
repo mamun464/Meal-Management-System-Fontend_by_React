@@ -10,6 +10,7 @@ const InventoryTable = ({ filterData, fetchInventoryData, filterUrl, month, year
     const [SelectedRow, setSelectedRow] = useState('');
     const [RowID, setRowID] = useState('');
     const [ItemId, setItemId] = useState();
+    const [invoiceId, setInvoiceId] = useState();
     const [StockData, setStockData] = useState({})
 
     const InventoryStockFetch = async (url) => {
@@ -51,9 +52,10 @@ const InventoryTable = ({ filterData, fetchInventoryData, filterUrl, month, year
     }, [RowID, ItemId, month, year]);
 
 
-    const handleInventoryList = (inventoryId, item_id) => {
+    const handleInventoryList = (inventoryId, item_id, Invoice_no) => {
         setRowID(inventoryId);
         setItemId(item_id);
+        setInvoiceId(Invoice_no);
     };
 
     return (
@@ -69,6 +71,7 @@ const InventoryTable = ({ filterData, fetchInventoryData, filterUrl, month, year
                                 <th>Quantity</th>
                                 <th>Damage Quantity</th>
                                 <th>Price Per Unit</th>
+                                <th>Invoice No.</th>
 
                             </tr>
                         </thead>

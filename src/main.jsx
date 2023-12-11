@@ -2,7 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
 import './index.css'
-
+import "tw-elements-react/dist/css/tw-elements-react.min.css";
 import {
   createBrowserRouter,
   RouterProvider,
@@ -11,6 +11,7 @@ import UsersList from './Components/UsersList/UsersList.jsx';
 import base_url from '../public/config.js';
 // import base_url from '/config.js';
 import Inventory from './Components/Inventory/Inventory';
+import Invoice from './Components/Inventory/Invoice/Invoice';
 
 
 const router = createBrowserRouter([
@@ -39,6 +40,11 @@ const router = createBrowserRouter([
       {
         path: "/inventory/",
         element: <Inventory></Inventory>,
+
+      },
+      {
+        path: "/inventory/invoice",
+        element: <Invoice></Invoice>,
 
       },
     ],

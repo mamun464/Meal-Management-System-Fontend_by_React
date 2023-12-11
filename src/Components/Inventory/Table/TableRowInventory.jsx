@@ -2,12 +2,12 @@
 import PropTypes from 'prop-types';
 
 const TableRowInventory = ({ item_inventory, index, handleInventoryList }) => {
-    const { id, item, quantity, price_per_unit, damage_quantity, purchase_date } = item_inventory
+    const { id, item, quantity, price_per_unit, damage_quantity, purchase_date, Invoice_no } = item_inventory
 
 
 
     const handleClickEffect = () => {
-        handleInventoryList(id, item.id);
+        handleInventoryList(id, item.id, Invoice_no);
         // console.log("Iteam: ", item.id);
 
     };
@@ -20,6 +20,7 @@ const TableRowInventory = ({ item_inventory, index, handleInventoryList }) => {
                 <td>{quantity}</td>
                 <td>{damage_quantity}</td>
                 <td>{price_per_unit}</td>
+                <td>{Invoice_no}</td>
                 {/* <td>Desktop Support Technician</td>
                 <td>Purple</td>
                 <td>Desktop Support Technician</td>
