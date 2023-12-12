@@ -62,6 +62,7 @@ const Inventory = () => {
 
                 const result = await response.json();
                 SetFilterVariant(result);
+                console.log("Varient page:", filterVariant);
             } catch (error) {
                 console.error('Error fetching data:', error);
             }

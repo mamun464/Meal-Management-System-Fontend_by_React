@@ -88,6 +88,7 @@ const Invoice = () => {
 
                 const result = await response.json();
                 SetFilterVariant(result);
+                console.log("Varient:---->", filterVariant);
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
@@ -162,7 +163,7 @@ const Invoice = () => {
                             <InvoiceDropdown
                                 type="Item"
                                 value={item.itemType}
-                                filterVariant={filterVariant}
+                                itemDropdown={itemDropdown}
                                 refreshDropdown={refreshDropdown}
                                 handleItem={handleItem}
                                 itemListFetch={itemListFetch}
