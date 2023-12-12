@@ -1,22 +1,42 @@
 import { useEffect, useState } from "react";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { MdLibraryAdd } from "react-icons/md";
 import InvoiceDropdown from "./InvoiceDropDown/InvoiceItemDropdown";
 import base_url from "../../../../public/config";
 import InvoiceVariantdropDown from "./InvoiceDropDown/InvoiceVariantdropDown";
+import { BiSolidPurchaseTagAlt } from "react-icons/bi";
 
 const Invoice = () => {
     const [itemDropdown, setItemDropdown] = useState([]);
     const [category, SetCategory] = useState('');
+    const [loading, SetLoading] = useState(false);
     const [VariantID, SetVariantID] = useState(0);
     const [filterVariant, SetFilterVariant] = useState([]);
 
+    const [poNumber, setPoNumber] = useState('');
+    const [billingAddress, setBillingAddress] = useState('');
+    const [shippingAddress, setShippingAddress] = useState('');
+    const [subtotal, setSubtotal] = useState(0);
+
+
     const [startDate, setStartDate] = useState(new Date());
-    const [items, setItems] = useState([{ itemType: "", variant: "", quantity: "", unitRate: "", amount: "" }]);
+    const [items, setItems] = useState([{ item: "", quantity: "", unitRate: "" }]);
+
+    const calculateTotalAmount = () => {
+        return items.reduce((accumulator, item) => accumulator + (item.quantity * item.unitRate || 0), 0);
+    };
+
+    useEffect(() => {
+        // Update subtotal whenever items change
+        setSubtotal(calculateTotalAmount());
+    }, [items]);
 
     const handleAddItem = () => {
-        setItems([...items, { itemType: "", variant: "", quantity: "", unitRate: "", amount: "" }]);
+        setItems([...items, { item: "", quantity: "", unitRate: "" }]);
     };
 
     const handleItemChange = (index, field, value) => {
@@ -32,17 +52,116 @@ const Invoice = () => {
     };
 
     const handleSubmit = () => {
-        // Collect and submit the data wherever needed
+        // Validate billing address
+        if (!startDate) {
+            // toast.warning('Please fill in the "Bill to" field.');
+            toast.warn('Date Field is Required', {
+            });
+            return;
+        }
+        if (!billingAddress) {
+            // toast.warning('Please fill in the "Bill to" field.');
+            toast.warn('Please fill in the "Bill to" field.', {
+            });
+            return;
+        }
+
+        // Validate PO number
+        if (!/^\d+$/.test(poNumber)) {
+            toast.warning('Please enter a valid PO Number with only numbers.');
+            return;
+        }
+
+        // Validate items
+        for (let i = 0; i < items.length; i++) {
+            const item = items[i];
+
+            // Check item field
+            if (!item.item) {
+                toast.warning(`Please fill in the "Item" field for Item ${i + 1}.`);
+                return;
+            }
+
+            // Check quantity field
+            if (!item.quantity) {
+                toast.warning(`Please fill in the "Quantity" field for Item ${i + 1}.`);
+                return;
+            }
+
+            // Check unitRate field
+            if (!item.unitRate) {
+                toast.warning(`Please fill in the "Unit Rate" field for Item ${i + 1}.`);
+                return;
+            }
+        }
+
+        // Extract only the date part from startDate
+        const formattedDate = startDate.toLocaleDateString();
         const formData = {
-            date: startDate,
-            billTo: "", // Add the actual value from the "Bill to" textarea
-            shipTo: "", // Add the actual value from the "Ship to" textarea
+            date: formattedDate,
+            billTo: billingAddress, // Add the actual value from the "Bill to" textarea
+            shipTo: shippingAddress, // Add the actual value from the "Ship to" textarea
+            poNumber: poNumber, // Add the actual value from the "Ship to" textarea
             items: [...items],
         };
 
         // Example: Log the form data to the console
-        console.log(formData);
+
+        const apiPostData = {
+            purchase_date: "2023-10-20",
+            product_list: items.map(item => ({
+                item: item?.item?.id, // Assuming item is the ID of the product
+                item_info: item, // Assuming item is the ID of the product
+                quantity: item.quantity,
+                price_per_unit: item.unitRate,
+            })),
+            Billing_address: billingAddress,
+            shipping_address: shippingAddress,
+            po_number: poNumber,
+        };
+
+        console.log(apiPostData);
+        SetLoading(true)
+        fetch(`${base_url}/api/inventory/create-invoice/`, {
+            method: 'POST',  // Change the method to POST
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(apiPostData),  // Include the data in the body
+        })
+            .then(response => {
+                if (!response.ok) {
+                    toast.error(`Order Not Complete`);
+                    // return;
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                toast.success(`Order Complete`);
+                return response.json();
+            })
+            .then(data => {
+                // Handle the success response data
+                console.log(data);
+            })
+            .catch(error => {
+                // Check if the error is a JSON response
+                if (error.response && error.response.json) {
+                    error.response.json().then(jsonError => {
+                        console.error('API Error:', jsonError.error);
+                        // You can now handle the error message from the JSON response
+                        // For example, show a toast or display an error message to the user
+                    });
+                } else {
+                    console.error('Error making API request:', error);
+                    // Handle other types of errors here
+                }
+            })
+            .finally(() => {
+                SetLoading(false);
+            });
+
+
     };
+
 
 
 
@@ -121,11 +240,14 @@ const Invoice = () => {
                 <div className="flex gap-5">
                     <div className="mt-5">
                         <h1 className="uppercase text-[13px] text-[#233255CC] font-bold mb-1">Bill to:</h1>
-                        <textarea className="border border-gray-300 p-2 rounded-md h-[67px]" placeholder="Who is this invoice to? (required)"></textarea>
+                        <textarea className="border border-gray-300 p-2 rounded-md h-[67px]"
+                            placeholder="Who is this invoice to? (required)"
+                            onChange={(e) => setBillingAddress(e.target.value)}></textarea>
                     </div>
                     <div className="mt-5">
                         <h1 className="uppercase text-[13px] text-[#233255CC] font-bold mb-1">Ship to:</h1>
-                        <textarea className="border border-gray-300 p-2 rounded-md h-[67px]" placeholder="Optional"></textarea>
+                        <textarea className="border border-gray-300 p-2 rounded-md h-[67px]" placeholder="Optional"
+                            onChange={(e) => setShippingAddress(e.target.value)}></textarea>
                     </div>
                 </div>
                 <div className="mt-5">
@@ -135,7 +257,10 @@ const Invoice = () => {
                     </div>
                     <div className="flex items-center gap-3">
                         <h1 className="uppercase text-[15px] text-[#233255CC] font-bold mb-1">PO Number</h1>
-                        <input type="tel" className="border border-gray-300 p-2 rounded-md" placeholder="PO Number" pattern="[0-9]*" />
+                        <input type="tel"
+                            className="border border-gray-300 p-2 rounded-md"
+                            placeholder="PO Number" pattern="[0-9]*"
+                            onChange={(e) => setPoNumber(e.target.value)} />
                     </div>
                 </div>
             </div>
@@ -167,7 +292,7 @@ const Invoice = () => {
                                 refreshDropdown={refreshDropdown}
                                 handleItem={handleItem}
                                 itemListFetch={itemListFetch}
-                                onChange={(e) => handleItemChange(index, 'itemType', e.target.value)}
+                            // onChange={(e) => handleItemChange(index, 'itemType', e.target.value)}
                             />
                         </div>
                         <div className="flex-1">
@@ -175,7 +300,8 @@ const Invoice = () => {
                                 type="Variant"
                                 value={item.variant}
                                 filterVariant={filterVariant}
-                                onChange={(e) => handleItemChange(index, 'variant', e.target.value)}
+                                handleVariant={handleVariant}
+                                onChange={(selectedVariant) => handleItemChange(index, 'item', selectedVariant)}
                             />
                         </div>
                     </div>
@@ -184,35 +310,67 @@ const Invoice = () => {
                             className="border border-gray-300 p-2 w-full rounded-lg"
                             type="number"
                             value={item.quantity}
-                            onChange={(e) => handleNumericFieldChange(index, 'quantity', e.target.value)}
+                            onChange={(e) => {
+                                const inputValue = e.target.value;
+                                if (/^\d*\.?\d*$/.test(inputValue) || inputValue === "") {
+                                    // Only update the state if the input is a positive number or an empty string
+                                    handleNumericFieldChange(index, 'quantity', inputValue);
+                                }
+                            }}
                         />
+
                         <input
                             className="border border-gray-300 p-2 w-full rounded-lg"
                             type="number"
                             value={item.unitRate}
-                            onChange={(e) => handleNumericFieldChange(index, 'unitRate', e.target.value)}
+                            onChange={(e) => {
+                                const inputValue = e.target.value;
+                                if (/^\d*\.?\d*$/.test(inputValue) || inputValue === "") {
+                                    // Only update the state if the input is a positive number or an empty string
+                                    handleNumericFieldChange(index, 'unitRate', inputValue);
+                                }
+                            }}
                         />
+
                         <input
-                            className="border border-gray-300 p-2 w-full rounded-lg"
-                            type="tel"
-                            value={item.amount}
-                            onChange={(e) => handleNumericFieldChange(index, 'amount', e.target.value)}
+                            className=" p-2 w-full rounded-lg text-end font-semibold"
+                            type="text"
+                            readOnly
+                            value={item.quantity * item.unitRate}
+                            style={{ outline: 'none' }} // Calculate the multiplication here
+                        // onChange={(e) => handleNumericFieldChange(index, 'amount', e.target.value)} // Remove this line
                         />
                     </div>
                 </div>
             ))}
 
-            <div>
+            <div className="flex justify-between items-center">
                 <button className="btn btn-accent text-white bg-[#009f6f] font-bold uppercase" onClick={handleAddItem}>
                     <span>
                         <MdLibraryAdd />
                     </span>Item
                 </button>
+                <div className="flex justify-end">
+                    <h1 className="uppercase textarea-md text-[#233255CC] font-bold text-center">Subtotal</h1>
+                    <input
+                        className="pr-2 w-2/5 py-1 rounded-lg text-end font-semibold outline-none"
+                        type="text"
+                        readOnly
+                        value={subtotal.toFixed(2)}
+                    // style={{ outline: 'none' }}
+                    />
 
-                <button className="btn btn-accent text-white bg-[#009f6f] font-bold uppercase" onClick={handleSubmit}>
-                    Submit
-                </button>
+                </div>
             </div>
+            <div className="flex justify-end mt-6">
+                {!loading && (
+                    <button className="btn btn-warning font-bold uppercase" onClick={handleSubmit}>
+                        <span><BiSolidPurchaseTagAlt /></span>Confirm Order
+                    </button>
+                )}
+            </div>
+
+            <ToastContainer></ToastContainer>
         </div>
     );
 };

@@ -8,12 +8,13 @@ import {
     TERipple,
 } from "tw-elements-react";
 
-const InvoiceVariantdropDown = ({ filterVariant, handleItem }) => {
+const InvoiceVariantdropDown = ({ filterVariant, handleItem, onChange }) => {
     console.log("filterVariant-Dropdown-------->", filterVariant)
     const [type, SetType] = useState('Select Variant')
     const handleItemClick = (item) => {
         // handleItem()
-        SetType(item?.variant)
+        SetType(item?.variant);
+        onChange && onChange(item);
     };
     return (
         <TEDropdown className="flex w-full" >
