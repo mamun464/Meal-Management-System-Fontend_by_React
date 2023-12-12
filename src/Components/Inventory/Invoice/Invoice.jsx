@@ -9,6 +9,7 @@ import InvoiceDropdown from "./InvoiceDropDown/InvoiceItemDropdown";
 import base_url from "../../../../public/config";
 import InvoiceVariantdropDown from "./InvoiceDropDown/InvoiceVariantdropDown";
 import { BiSolidPurchaseTagAlt } from "react-icons/bi";
+import DownloadModal from "./DownloadModal/DownloadModal";
 
 const Invoice = () => {
     const [itemDropdown, setItemDropdown] = useState([]);
@@ -16,6 +17,8 @@ const Invoice = () => {
     const [loading, SetLoading] = useState(false);
     const [VariantID, SetVariantID] = useState(0);
     const [filterVariant, SetFilterVariant] = useState([]);
+    const [ResponseData, SetResponseData] = useState({});
+    const [showModal, setShowModal] = useState(false);
 
     const [poNumber, setPoNumber] = useState('');
     const [billingAddress, setBillingAddress] = useState('');
@@ -34,6 +37,12 @@ const Invoice = () => {
         // Update subtotal whenever items change
         setSubtotal(calculateTotalAmount());
     }, [items]);
+
+    const handleModalClose = () => {
+        // Close the modal and reset the ResponseData
+        setShowModal(false);
+        SetResponseData({});
+    };
 
     const handleAddItem = () => {
         setItems([...items, { item: "", quantity: "", unitRate: "" }]);
@@ -96,7 +105,8 @@ const Invoice = () => {
         }
 
         // Extract only the date part from startDate
-        const formattedDate = startDate.toLocaleDateString();
+        const formattedDate = `${startDate.getFullYear()}-${startDate.getMonth() + 1}-${startDate.getDate()}`;
+        // console.log(formattedDate);
         const formData = {
             date: formattedDate,
             billTo: billingAddress, // Add the actual value from the "Bill to" textarea
@@ -108,7 +118,7 @@ const Invoice = () => {
         // Example: Log the form data to the console
 
         const apiPostData = {
-            purchase_date: "2023-10-20",
+            purchase_date: formattedDate,
             product_list: items.map(item => ({
                 item: item?.item?.id, // Assuming item is the ID of the product
                 item_info: item, // Assuming item is the ID of the product
@@ -120,7 +130,7 @@ const Invoice = () => {
             po_number: poNumber,
         };
 
-        console.log(apiPostData);
+        // console.log(apiPostData);
         SetLoading(true)
         fetch(`${base_url}/api/inventory/create-invoice/`, {
             method: 'POST',  // Change the method to POST
@@ -140,7 +150,10 @@ const Invoice = () => {
             })
             .then(data => {
                 // Handle the success response data
-                console.log(data);
+                console.log("----------->>>", data);
+                SetResponseData(data)
+                setShowModal(true);
+
             })
             .catch(error => {
                 // Check if the error is a JSON response
@@ -207,7 +220,7 @@ const Invoice = () => {
 
                 const result = await response.json();
                 SetFilterVariant(result);
-                console.log("Varient:---->", filterVariant);
+                // console.log("Varient:---->", filterVariant);
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
@@ -234,143 +247,149 @@ const Invoice = () => {
 
 
     return (
-        <div className="max-w-7xl mx-auto border p-4 rounded-md bg-gray-50 drop-shadow-lg">
-            <h1 className="uppercase text-3xl text-[#233255CC] font-bold text-center my-3">Invoice</h1>
-            <div className="flex justify-between">
-                <div className="flex gap-5">
-                    <div className="mt-5">
-                        <h1 className="uppercase text-[13px] text-[#233255CC] font-bold mb-1">Bill to:</h1>
-                        <textarea className="border border-gray-300 p-2 rounded-md h-[67px]"
-                            placeholder="Who is this invoice to? (required)"
-                            onChange={(e) => setBillingAddress(e.target.value)}></textarea>
-                    </div>
-                    <div className="mt-5">
-                        <h1 className="uppercase text-[13px] text-[#233255CC] font-bold mb-1">Ship to:</h1>
-                        <textarea className="border border-gray-300 p-2 rounded-md h-[67px]" placeholder="Optional"
-                            onChange={(e) => setShippingAddress(e.target.value)}></textarea>
-                    </div>
-                </div>
-                <div className="mt-5">
-                    <div className="flex items-center justify-end gap-3 mb-2">
-                        <h1 className="uppercase text-[15px] text-[#233255CC] font-bold mb-1">Date</h1>
-                        <DatePicker className="border border-gray-300 p-2 rounded-md" selected={startDate} onChange={(date) => setStartDate(date)} />
-                    </div>
-                    <div className="flex items-center gap-3">
-                        <h1 className="uppercase text-[15px] text-[#233255CC] font-bold mb-1">PO Number</h1>
-                        <input type="tel"
-                            className="border border-gray-300 p-2 rounded-md"
-                            placeholder="PO Number" pattern="[0-9]*"
-                            onChange={(e) => setPoNumber(e.target.value)} />
-                    </div>
-                </div>
-            </div>
-
-            <div className="flex bg-[#242e38] uppercase text-sm text-[#fff] font-bold p-2 rounded-md mt-5">
-                <div className="flex" style={{ flex: '7' }}>
-                    <div className="flex-1">
-                        <h1>Item</h1>
-                    </div>
-                    <div className="flex-1">
-                        <h1>Variant</h1>
-                    </div>
-                </div>
-                <div className="flex gap-3 justify-between" style={{ flex: '3' }}>
-                    <h1>Quantity</h1>
-                    <h1>Unit Rate</h1>
-                    <h1>Amount</h1>
-                </div>
-            </div>
-
-            {items.map((item, index) => (
-                <div key={index} className="my-2 flex">
-                    <div className="flex gap-2" style={{ flex: '7' }}>
-                        <div className="flex-1">
-                            <InvoiceDropdown
-                                type="Item"
-                                value={item.itemType}
-                                itemDropdown={itemDropdown}
-                                refreshDropdown={refreshDropdown}
-                                handleItem={handleItem}
-                                itemListFetch={itemListFetch}
-                            // onChange={(e) => handleItemChange(index, 'itemType', e.target.value)}
-                            />
+        <div>
+            <div className="max-w-7xl mx-auto border p-4 rounded-md bg-gray-50 drop-shadow-lg">
+                <h1 className="uppercase text-3xl text-[#233255CC] font-bold text-center my-3">Invoice</h1>
+                <div className="flex justify-between">
+                    <div className="flex gap-5">
+                        <div className="mt-5">
+                            <h1 className="uppercase text-[13px] text-[#233255CC] font-bold mb-1">Bill to:</h1>
+                            <textarea className="border border-gray-300 p-2 rounded-md h-[67px]"
+                                placeholder="Who is this invoice to? (required)"
+                                onChange={(e) => setBillingAddress(e.target.value)}></textarea>
                         </div>
-                        <div className="flex-1">
-                            <InvoiceVariantdropDown
-                                type="Variant"
-                                value={item.variant}
-                                filterVariant={filterVariant}
-                                handleVariant={handleVariant}
-                                onChange={(selectedVariant) => handleItemChange(index, 'item', selectedVariant)}
-                            />
+                        <div className="mt-5">
+                            <h1 className="uppercase text-[13px] text-[#233255CC] font-bold mb-1">Ship to:</h1>
+                            <textarea className="border border-gray-300 p-2 rounded-md h-[67px]" placeholder="Optional"
+                                onChange={(e) => setShippingAddress(e.target.value)}></textarea>
                         </div>
                     </div>
-                    <div className="flex gap-2 justify-between pl-4" style={{ flex: '3' }}>
-                        <input
-                            className="border border-gray-300 p-2 w-full rounded-lg"
-                            type="number"
-                            value={item.quantity}
-                            onChange={(e) => {
-                                const inputValue = e.target.value;
-                                if (/^\d*\.?\d*$/.test(inputValue) || inputValue === "") {
-                                    // Only update the state if the input is a positive number or an empty string
-                                    handleNumericFieldChange(index, 'quantity', inputValue);
-                                }
-                            }}
-                        />
+                    <div className="mt-5">
+                        <div className="flex items-center justify-end gap-3 mb-2">
+                            <h1 className="uppercase text-[15px] text-[#233255CC] font-bold mb-1">Date</h1>
+                            <DatePicker className="border border-gray-300 p-2 rounded-md" selected={startDate} onChange={(date) => setStartDate(date)} />
+                        </div>
+                        <div className="flex items-center gap-3">
+                            <h1 className="uppercase text-[15px] text-[#233255CC] font-bold mb-1">PO Number</h1>
+                            <input type="tel"
+                                className="border border-gray-300 p-2 rounded-md"
+                                placeholder="PO Number" pattern="[0-9]*"
+                                onChange={(e) => setPoNumber(e.target.value)} />
+                        </div>
+                    </div>
+                </div>
 
-                        <input
-                            className="border border-gray-300 p-2 w-full rounded-lg"
-                            type="number"
-                            value={item.unitRate}
-                            onChange={(e) => {
-                                const inputValue = e.target.value;
-                                if (/^\d*\.?\d*$/.test(inputValue) || inputValue === "") {
-                                    // Only update the state if the input is a positive number or an empty string
-                                    handleNumericFieldChange(index, 'unitRate', inputValue);
-                                }
-                            }}
-                        />
+                <div className="flex bg-[#242e38] uppercase text-sm text-[#fff] font-bold p-2 rounded-md mt-5">
+                    <div className="flex" style={{ flex: '7' }}>
+                        <div className="flex-1">
+                            <h1>Item</h1>
+                        </div>
+                        <div className="flex-1">
+                            <h1>Variant</h1>
+                        </div>
+                    </div>
+                    <div className="flex gap-3 justify-between" style={{ flex: '3' }}>
+                        <h1>Quantity</h1>
+                        <h1>Unit Rate</h1>
+                        <h1>Amount</h1>
+                    </div>
+                </div>
 
+                {items.map((item, index) => (
+                    <div key={index} className="my-2 flex">
+                        <div className="flex gap-2" style={{ flex: '7' }}>
+                            <div className="flex-1">
+                                <InvoiceDropdown
+                                    type="Item"
+                                    value={item.itemType}
+                                    itemDropdown={itemDropdown}
+                                    refreshDropdown={refreshDropdown}
+                                    handleItem={handleItem}
+                                    itemListFetch={itemListFetch}
+                                // onChange={(e) => handleItemChange(index, 'itemType', e.target.value)}
+                                />
+                            </div>
+                            <div className="flex-1">
+                                <InvoiceVariantdropDown
+                                    type="Variant"
+                                    value={item.variant}
+                                    filterVariant={filterVariant}
+                                    handleVariant={handleVariant}
+                                    onChange={(selectedVariant) => handleItemChange(index, 'item', selectedVariant)}
+                                />
+                            </div>
+                        </div>
+                        <div className="flex gap-2 justify-between pl-4" style={{ flex: '3' }}>
+                            <input
+                                className="border border-gray-300 p-2 w-full rounded-lg"
+                                type="number"
+                                value={item.quantity}
+                                onChange={(e) => {
+                                    const inputValue = e.target.value;
+                                    if (/^\d*\.?\d*$/.test(inputValue) || inputValue === "") {
+                                        // Only update the state if the input is a positive number or an empty string
+                                        handleNumericFieldChange(index, 'quantity', inputValue);
+                                    }
+                                }}
+                            />
+
+                            <input
+                                className="border border-gray-300 p-2 w-full rounded-lg"
+                                type="number"
+                                value={item.unitRate}
+                                onChange={(e) => {
+                                    const inputValue = e.target.value;
+                                    if (/^\d*\.?\d*$/.test(inputValue) || inputValue === "") {
+                                        // Only update the state if the input is a positive number or an empty string
+                                        handleNumericFieldChange(index, 'unitRate', inputValue);
+                                    }
+                                }}
+                            />
+
+                            <input
+                                className=" p-2 w-full rounded-lg text-end font-semibold"
+                                type="text"
+                                readOnly
+                                value={item.quantity * item.unitRate}
+                                style={{ outline: 'none' }} // Calculate the multiplication here
+                            // onChange={(e) => handleNumericFieldChange(index, 'amount', e.target.value)} // Remove this line
+                            />
+                        </div>
+                    </div>
+                ))}
+
+                <div className="flex justify-between items-center">
+                    <button className="btn btn-accent text-white bg-[#009f6f] font-bold uppercase" onClick={handleAddItem}>
+                        <span>
+                            <MdLibraryAdd />
+                        </span>Item
+                    </button>
+                    <div className="flex justify-end">
+                        <h1 className="uppercase textarea-md text-[#233255CC] font-bold text-center">Subtotal</h1>
                         <input
-                            className=" p-2 w-full rounded-lg text-end font-semibold"
+                            className="pr-2 w-2/5 py-1 rounded-lg text-end font-semibold outline-none"
                             type="text"
                             readOnly
-                            value={item.quantity * item.unitRate}
-                            style={{ outline: 'none' }} // Calculate the multiplication here
-                        // onChange={(e) => handleNumericFieldChange(index, 'amount', e.target.value)} // Remove this line
+                            value={subtotal.toFixed(2)}
+                        // style={{ outline: 'none' }}
                         />
+
                     </div>
                 </div>
-            ))}
-
-            <div className="flex justify-between items-center">
-                <button className="btn btn-accent text-white bg-[#009f6f] font-bold uppercase" onClick={handleAddItem}>
-                    <span>
-                        <MdLibraryAdd />
-                    </span>Item
-                </button>
-                <div className="flex justify-end">
-                    <h1 className="uppercase textarea-md text-[#233255CC] font-bold text-center">Subtotal</h1>
-                    <input
-                        className="pr-2 w-2/5 py-1 rounded-lg text-end font-semibold outline-none"
-                        type="text"
-                        readOnly
-                        value={subtotal.toFixed(2)}
-                    // style={{ outline: 'none' }}
-                    />
-
+                <div className="flex justify-end mt-6">
+                    {!loading && (
+                        <button className="btn btn-warning font-bold uppercase" onClick={handleSubmit}>
+                            <span><BiSolidPurchaseTagAlt /></span>Confirm Order
+                        </button>
+                    )}
                 </div>
-            </div>
-            <div className="flex justify-end mt-6">
-                {!loading && (
-                    <button className="btn btn-warning font-bold uppercase" onClick={handleSubmit}>
-                        <span><BiSolidPurchaseTagAlt /></span>Confirm Order
-                    </button>
-                )}
-            </div>
 
-            <ToastContainer></ToastContainer>
+                <ToastContainer></ToastContainer>
+                {/* Show the modal when showModal is true */}
+                {/* DownloadModal component */}
+
+            </div>
+            <DownloadModal showModal={showModal} setShowModal={handleModalClose} ResponseData={ResponseData} />
         </div>
     );
 };
