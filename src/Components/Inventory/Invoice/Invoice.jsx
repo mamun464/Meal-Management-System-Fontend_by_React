@@ -122,15 +122,16 @@ const Invoice = () => {
             product_list: items.map(item => ({
                 item: item?.item?.id, // Assuming item is the ID of the product
                 item_info: item, // Assuming item is the ID of the product
-                quantity: item.quantity,
-                price_per_unit: item.unitRate,
+                quantity: parseFloat(item.quantity.toFixed(2)),
+                price_per_unit: parseFloat(item.unitRate.toFixed(2)),
             })),
             Billing_address: billingAddress,
             shipping_address: shippingAddress,
             po_number: poNumber,
+            subtotal: parseFloat(subtotal.toFixed(2)),
         };
 
-        // console.log(apiPostData);
+        // console.log("++++++++++++++++++", JSON.stringify(apiPostData));
         SetLoading(true)
         fetch(`${base_url}/api/inventory/create-invoice/`, {
             method: 'POST',  // Change the method to POST
@@ -141,9 +142,25 @@ const Invoice = () => {
         })
             .then(response => {
                 if (!response.ok) {
-                    toast.error(`Order Not Complete`);
-                    // return;
-                    throw new Error(`HTTP error! Status: ${response.status}`);
+                    return response.json().then(errorData => {
+                        // Check if the errorData includes an "errors" field
+                        if (errorData.errors) {
+                            // Iterate over the errors and display them
+                            for (const field in errorData.errors) {
+                                const errorMessages = errorData.errors[field];
+                                // Display each error message using toast.error
+                                errorMessages.forEach(errorMessage => {
+                                    toast.error(`${field}: ${errorMessage}`);
+                                });
+                            }
+                        } else {
+                            // If the error format is unexpected, display a generic error message
+                            toast.error('An error occurred. Please try again.');
+                        }
+
+                        // Throw an error to handle it in the catch block
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    });
                 }
                 toast.success(`Order Complete`);
                 return response.json();
