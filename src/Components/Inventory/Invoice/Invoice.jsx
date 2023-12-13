@@ -132,31 +132,32 @@ const Invoice = () => {
         // console.log("++++++++++++++++++", JSON.stringify(apiPostData));
         SetLoading(true)
         fetch(`${base_url}/api/inventory/create-invoice/`, {
-            method: 'POST',  // Change the method to POST
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(apiPostData),  // Include the data in the body
+            body: JSON.stringify(apiPostData),
         })
             .then(response => {
                 if (!response.ok) {
+                    // toast.error(`Bad Request: ${response} Please check your request data.`);
                     return response.json().then(errorData => {
-                        // Check if the errorData includes an "errors" field
+                        // toast.error(`catch in one`);
                         if (errorData.errors) {
-                            // Iterate over the errors and display them
+                            // toast.error(`catch in Two`);
                             for (const field in errorData.errors) {
+                                // toast.error(`catch in for ${field}`);
                                 const errorMessages = errorData.errors[field];
-                                // Display each error message using toast.error
+                                toast.error(`Status: ${response.status}\n${JSON.stringify(errorMessages)}`);
+
                                 errorMessages.forEach(errorMessage => {
                                     toast.error(`${field}: ${errorMessage}`);
                                 });
                             }
                         } else {
-                            // If the error format is unexpected, display a generic error message
                             toast.error('An error occurred. Please try again.');
                         }
 
-                        // Throw an error to handle it in the catch block
                         throw new Error(`HTTP error! Status: ${response.status}`);
                     });
                 }
