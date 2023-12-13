@@ -3,6 +3,8 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import base_url from "../../../../../public/config";
 import PropTypes from 'prop-types';
+import { FaDownload } from "react-icons/fa";
+import { IoCloseCircle } from "react-icons/io5";
 
 const DownloadModal = ({ showModal, setShowModal, ResponseData }) => {
 
@@ -99,15 +101,27 @@ const DownloadModal = ({ showModal, setShowModal, ResponseData }) => {
                                     />
                                 </div>
                                 <p className="py-4 uppercase text-[13px] text-[#233255CC] font-bold mb-1 text-center">Click To Download Invoice</p>
-                                <div className="modal-action flex justify-between">
+                                <div className="modal-action flex justify-between flex-row-reverse">
                                     <form method="dialog">
                                         {/* if there is a button in form, it will close the modal */}
-                                        <button className="btn btn-outline btn-error" onClick={() => setShowModal(false)}>
-                                            Close
+                                        <button
+                                            className="btn btn-outline btn-error"
+                                            style={{ color: 'red', borderColor: 'red', transition: 'color 0.3s, border-color 0.3s' }}
+                                            onMouseOver={(e) => {
+                                                e.currentTarget.style.color = 'white';
+                                                e.currentTarget.style.borderColor = 'white';
+                                            }}
+                                            onMouseOut={(e) => {
+                                                e.currentTarget.style.color = 'red';
+                                                e.currentTarget.style.borderColor = 'red';
+                                            }}
+                                            onClick={() => setShowModal(false)}
+                                        >
+                                            <IoCloseCircle /> Close
                                         </button>
                                     </form>
                                     <button className="btn btn-warning" onClick={() => handleDownload()}>
-                                        Download Invoice
+                                        <FaDownload /> Invoice
                                     </button>
                                 </div>
                             </div>
