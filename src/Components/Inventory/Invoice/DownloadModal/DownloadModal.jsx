@@ -1,14 +1,15 @@
-import { useEffect, useState } from "react";
+
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import base_url from "../../../../../public/config";
+import PropTypes from 'prop-types';
 
 const DownloadModal = ({ showModal, setShowModal, ResponseData }) => {
-    const [PdfData, SetPdfData] = useState({})
+
 
 
     const handleDownload = () => {
-        console.log("Download---------------+++++++");
+        toast.success(`Invoice Downloading Started !`);
         fetch(`${base_url}/api/inventory/generateinvoice/`, {
             method: 'POST',  // Change the method to POST
             headers: {
@@ -18,6 +19,7 @@ const DownloadModal = ({ showModal, setShowModal, ResponseData }) => {
         })
             .then(response => {
                 if (!response.ok) {
+
                     return response.json().then(errorData => {
                         // Check if the errorData includes an "errors" field
                         if (errorData.errors) {
@@ -37,12 +39,14 @@ const DownloadModal = ({ showModal, setShowModal, ResponseData }) => {
                         // Throw an error to handle it in the catch block
                         throw new Error(`HTTP error! Status: ${response.status}`);
                     });
+
                 }
-                toast.success(`Order Complete`);
+
                 return response.json();
             })
-            .then(data => {
+            .then(() => {
                 // Handle the success response data
+
 
                 setShowModal(true);
 
@@ -84,16 +88,25 @@ const DownloadModal = ({ showModal, setShowModal, ResponseData }) => {
                         <dialog id="my_modal_5" className="modal modal-bottom sm:modal-middle" open>
                             <div className="modal-box bg-white p-4 rounded-md">
                                 <h3 className="font-bold text-lg text-black"></h3>
-                                <p className="py-4 text-black">{JSON.stringify(ResponseData)}</p>
-                                <p className="py-4 text-black">Press ESC key or click the button below to close</p>
-                                <div className="modal-action">
+                                {/* <p className="py-4 text-black">{JSON.stringify(ResponseData)}</p> */}
+                                <div className="flex justify-center">
+                                    <img
+                                        src="https://i.ibb.co/Qc7XMhr/logo-header.png"
+                                        className="brand-logo"
+                                        width={150}
+                                        height={150}
+                                        alt="Brand Logo"
+                                    />
+                                </div>
+                                <p className="py-4 uppercase text-[13px] text-[#233255CC] font-bold mb-1 text-center">Click To Download Invoice</p>
+                                <div className="modal-action flex justify-between">
                                     <form method="dialog">
                                         {/* if there is a button in form, it will close the modal */}
-                                        <button className="btn" onClick={() => setShowModal(false)}>
+                                        <button className="btn btn-outline btn-error" onClick={() => setShowModal(false)}>
                                             Close
                                         </button>
                                     </form>
-                                    <button className="btn" onClick={() => handleDownload()}>
+                                    <button className="btn btn-warning" onClick={() => handleDownload()}>
                                         Download Invoice
                                     </button>
                                 </div>
@@ -108,3 +121,12 @@ const DownloadModal = ({ showModal, setShowModal, ResponseData }) => {
 };
 
 export default DownloadModal;
+
+DownloadModal.propTypes = {
+
+    ResponseData: PropTypes.object.isRequired,
+    setShowModal: PropTypes.func.isRequired,
+    showModal: PropTypes.func.isRequired,
+    refreshDropdown: PropTypes.func.isRequired,
+    type: PropTypes.string.isRequired,
+}

@@ -15,7 +15,7 @@ const Invoice = () => {
     const [itemDropdown, setItemDropdown] = useState([]);
     const [category, SetCategory] = useState('');
     const [loading, SetLoading] = useState(false);
-    const [VariantID, SetVariantID] = useState(0);
+    const [, SetVariantID] = useState(0);
     const [filterVariant, SetFilterVariant] = useState([]);
     const [ResponseData, SetResponseData] = useState({});
     const [showModal, setShowModal] = useState(false);
@@ -23,19 +23,22 @@ const Invoice = () => {
     const [poNumber, setPoNumber] = useState('');
     const [billingAddress, setBillingAddress] = useState('');
     const [shippingAddress, setShippingAddress] = useState('');
-    const [subtotal, setSubtotal] = useState(0);
+    const [totalAmount, SettotalAmount] = useState(0);
 
 
     const [startDate, setStartDate] = useState(new Date());
-    const [items, setItems] = useState([{ item: "", quantity: "", unitRate: "" }]);
+    const [items, setItems] = useState([{ item: "", quantity: "", unitRate: "", }]);
 
     const calculateTotalAmount = () => {
         return items.reduce((accumulator, item) => accumulator + (item.quantity * item.unitRate || 0), 0);
     };
 
+
+
     useEffect(() => {
         // Update subtotal whenever items change
-        setSubtotal(calculateTotalAmount());
+        SettotalAmount(calculateTotalAmount());
+
     }, [items]);
 
     const handleModalClose = () => {
@@ -107,13 +110,7 @@ const Invoice = () => {
         // Extract only the date part from startDate
         const formattedDate = `${startDate.getFullYear()}-${startDate.getMonth() + 1}-${startDate.getDate()}`;
         // console.log(formattedDate);
-        const formData = {
-            date: formattedDate,
-            billTo: billingAddress, // Add the actual value from the "Bill to" textarea
-            shipTo: shippingAddress, // Add the actual value from the "Ship to" textarea
-            poNumber: poNumber, // Add the actual value from the "Ship to" textarea
-            items: [...items],
-        };
+
 
         // Example: Log the form data to the console
 
@@ -124,11 +121,12 @@ const Invoice = () => {
                 item_info: item, // Assuming item is the ID of the product
                 quantity: parseFloat(item.quantity.toFixed(2)),
                 price_per_unit: parseFloat(item.unitRate.toFixed(2)),
+                subtotal: parseFloat((item.quantity * item.unitRate).toFixed(2)),
             })),
             Billing_address: billingAddress,
             shipping_address: shippingAddress,
             po_number: poNumber,
-            subtotal: parseFloat(subtotal.toFixed(2)),
+            totalAmount: parseFloat(totalAmount.toFixed(2)),
         };
 
         // console.log("++++++++++++++++++", JSON.stringify(apiPostData));
@@ -382,12 +380,12 @@ const Invoice = () => {
                         </span>Item
                     </button>
                     <div className="flex justify-end">
-                        <h1 className="uppercase textarea-md text-[#233255CC] font-bold text-center">Subtotal</h1>
+                        <h1 className="uppercase textarea-md text-[#233255CC] font-bold text-center">Total Amount</h1>
                         <input
                             className="pr-2 w-2/5 py-1 rounded-lg text-end font-semibold outline-none"
                             type="text"
                             readOnly
-                            value={subtotal.toFixed(2)}
+                            value={totalAmount.toFixed(2)}
                         // style={{ outline: 'none' }}
                         />
 
