@@ -1,3 +1,3 @@
 // config.js
-const base_url = "http://127.0.0.1:8000";
+const base_url = "https://meal-management-backend-new.onrender.com/";
 export default base_url;
